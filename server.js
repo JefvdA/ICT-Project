@@ -7,7 +7,7 @@ path = require("path");
 
 var storage = multer.diskStorage({
     destination: function(req, file, cb) {
-        cb(null, 'uploads')
+        cb(null, 'Uploads')
     },
     filename: function(req, file, cb) {
         cb(null, file.originalname)
@@ -23,7 +23,7 @@ app.get('/', (req, res) => {
 
 app.get('/api/files/:uuid', (req, res) => {
 
-    res.download(path.join(__dirname, "uploads/" + req.params.uuid));
+    res.download(path.join(__dirname, "Uploads/" + req.params.uuid));
 })
 
 app.post('/api/files', upload.single('myFile'), (req, res, next) => {
