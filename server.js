@@ -12,11 +12,7 @@ var storage = multer.diskStorage({
         cb(null, 'Uploads')
     },
     filename: function(req, file, cb) {
-        /**
-         * cb(null, file.originalname.replaceAll(" ", "_")) -> ERROR
-         * file.originalname.replaceAll is not a function
-         */
-        cb(null, file.originalname)
+        cb(null, file.originalname.replaceAll(" ", "_"))
     }
 })
 
@@ -44,11 +40,7 @@ app.post('/api/files', upload.single('myFile'), (req, res, next) => {
         error.httpStatusCode = 400
         return next(error)
     }
-    /**
-     * res.send(file.originalname.replaceAll(" ", "_") + " has been uploaded") -> ERROR
-     * file.originalname.replaceAll is not a function
-     */
-    res.send(file.originalname + " has been uploaded")
+     res.send(file.originalname.replaceAll(" ", "_") + " has been uploaded")
 })
 
 app.listen(3000, () => console.log('Server ready'))
