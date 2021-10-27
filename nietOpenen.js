@@ -2,22 +2,15 @@ import express from 'express'
 import * as path from 'path'
 import * as fs from 'fs'
 import upload from 'express-fileupload'
+import { PutObjectCommand } from "@aws-sdk/client-s3";
+import { S3Client } from "@aws-sdk/client-s3";
 const __dirname = path.resolve()
-    // const express = require('express')
 const app = express()
-    // const multer = require('multer');
+const REGION = "us-east-1";
+const s3Client = new S3Client({ region: REGION });
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(upload())
-    // path = require("path");
-    // const fs = require('fs');
-import { PutObjectCommand } from "@aws-sdk/client-s3";
-
-import { S3Client } from "@aws-sdk/client-s3";
-// Set the AWS Region.
-const REGION = "us-east-1"; //e.g. "us-east-1"
-// Create an Amazon S3 service client object.
-const s3Client = new S3Client({ region: REGION });
 
 app.get('/', (req, res) => {
 
