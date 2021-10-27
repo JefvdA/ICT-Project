@@ -1,35 +1,38 @@
+const multer = require('multer')
+const path = require("path")
+const fs = require('fs')
+
 const express = require('express')
 const app = express()
-const multer = require('multer');
-app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
-path = require("path");
-const fs = require('fs');
+app.use(express.json())
+app.use(express.urlencoded({ extended: false }))
 
 var storage = multer.diskStorage({
     destination: function(req, file, cb) {
         cb(null, 'Uploads')
     },
     filename: function(req, file, cb) {
-        cb(null, file.originalname.replaceAll(" ", "_"))
+        /**
+         * cb(null, file.originalname.replaceAll(" ", "_")) -> ERROR
+         * file.originalname.replaceAll is not a function
+         */
+        cb(null, file.originalname)
     }
 })
 
 var upload = multer({ storage: storage })
 
 app.get('/', (req, res) => {
-
     res.sendFile(path.join(__dirname, "upload.html"))
 })
 
 app.get('/api/files/:uuid', (req, res) => {
-
     //checksum
     var dateCreated = fs.statSync(path.join(__dirname, "Uploads/" + req.params.uuid)).birthtime;
     if (((new Date().getTime() - dateCreated.getTime()) / 60000) > 1440)
-        res.send("24 hours have passed");
+        res.send("24 hours have passed")
     else
-        res.download(path.join(__dirname, "Uploads/" + req.params.uuid));
+        res.download(path.join(__dirname, "Uploads/" + req.params.uuid))
     console.log((new Date().getTime() - dateCreated.getTime()) / 60000)
 
 })
@@ -41,7 +44,11 @@ app.post('/api/files', upload.single('myFile'), (req, res, next) => {
         error.httpStatusCode = 400
         return next(error)
     }
-    res.send(file.originalname.replaceAll(" ", "_") + " has been uploaded")
-
+    /**
+     * res.send(file.originalname.replaceAll(" ", "_") + " has been uploaded") -> ERROR
+     * file.originalname.replaceAll is not a function
+     */
+    res.send(file.originalname + " has been uploaded")
 })
+
 app.listen(3000, () => console.log('Server ready'))
