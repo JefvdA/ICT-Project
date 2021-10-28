@@ -1,3 +1,4 @@
+import { ListBucketsCommand, GetObjectCommand } from "@aws-sdk/client-s3";
 import express from 'express'
 import * as path from 'path'
 import * as fs from 'fs'
@@ -20,13 +21,20 @@ app.get('/', (req, res) => {
 app.get('/api/files/:uuid', (req, res) => {
 
     //checksum
-    var dateCreated = fs.statSync(path.join(__dirname, "uploads/" + req.params.uuid)).birthtime;
-    if (((new Date().getTime() - dateCreated.getTime()) / 60000) > 1440)
-        res.send("24 hours have passed");
-    else
-        res.download(path.join(__dirname, "uploads/" + req.params.uuid));
-    console.log((new Date().getTime() - dateCreated.getTime()) / 60000)
-
+    // Upload file to specified bucket.
+    const run = async() => {
+        try {
+            const data = await s3Client.send(new ListBucketsCommand({}));
+            const data2 = await s3Client.send(new GetObjectCommand({ Bucket: "saadiandco", Key: path.basename(req.params.uuid) }));
+            console.log(data2)
+            res.send(data.Buckets)
+                // For unit tests.
+        } catch (err) {
+            res.send(err)
+            console.log("Error", err);
+        }
+    };
+    run();
 })
 
 app.post('/api/files', (req, res) => {
