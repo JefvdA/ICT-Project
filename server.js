@@ -13,20 +13,15 @@ app.use(fileUpload())
 
 
 app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, "index.html"))
+    res.sendFile(path.join(__dirname, "pages/index.html"))
 })
 app.get('/login', (req, res) => {
-    res.sendFile(path.join(__dirname, "login.html"))
+    res.sendFile(path.join(__dirname, "pages/login.html"))
 })
 
 app.get('/register', (req, res) => {
-    res.sendFile(path.join(__dirname, "register.html"))
+    res.sendFile(path.join(__dirname, "pages/register.html"))
 })
-app.get('/upload', (req, res) => {
-
-    res.sendFile(path.join(__dirname, "upload.html"))
-})
-
 
 app.get('/api/files/:uuid', (req, res) => {
     const uuid = req.params.uuid
@@ -58,7 +53,7 @@ app.post('/api/login', (req, res) => {
     let output = security.login(req.body.myEmail, req.body.myPassword)
     output.then(
         function(value) {
-            res.sendFile(path.join(__dirname, "upload.html"))
+            res.sendFile(path.join(__dirname, "pages/upload.html"))
         },
         function(error) {
             console.log(error)
