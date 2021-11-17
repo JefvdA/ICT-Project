@@ -12,15 +12,15 @@ app.use(fileUpload())
 
 
 app.get('/', (req, res) => {
-    res.sendFile(path.join(path.resolve(), "upload.html"))
+    res.sendFile(path.join(path.resolve(), "register.html"))
 })
 
 app.get('/api/files/:uuid', (req, res) => {
     const uuid = req.params.uuid
 
-    DownloadFile(uuid).then((fileLocation) =>{
+    DownloadFile(uuid).then((fileLocation) => {
         res.download(fileLocation, (err) => {
-            if(err) throw err
+            if (err) throw err
             fs.unlinkSync(fileLocation)
         })
     })
@@ -37,4 +37,7 @@ app.post('/api/files', (req, res, next) => {
     UploadFile(file)
 })
 
+app.post('/api/register', (req, res) => {
+    console.log(req.body.myEmail);
+})
 app.listen(3000, () => console.log('Server ready'))
