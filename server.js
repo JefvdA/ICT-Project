@@ -1,10 +1,10 @@
 import * as path from 'path'
 import * as fs from 'fs'
 
-import { DownloadFile, UploadFile } from './AWS/s3Functions.js';
+import { DownloadFile, UploadFile } from './AWS/s3Functions.js'
 
 import express from 'express'
-import fileUpload from 'express-fileupload';
+import fileUpload from 'express-fileupload'
 const app = express()
 app.use(express.json())
 app.use(express.urlencoded({ extended: false }))
@@ -18,11 +18,9 @@ app.get('/', (req, res) => {
 app.get('/api/files/:uuid', (req, res) => {
     const uuid = req.params.uuid
 
-    DownloadFile(uuid).then((fileLocation) =>{
-        res.download(fileLocation, (err) => {
-            if(err) throw err
-            fs.unlinkSync(fileLocation)
-        })
+    DownloadFile(uuid).then((fileStream) =>{
+        res.attachment(uuid.split(":")[1]) // Get filename through UUID parameter -> Later replace this with filename gotten out of rds database
+        fileStream.pipe(res)
     })
 })
 
