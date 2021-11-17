@@ -1,10 +1,10 @@
 import * as path from 'path'
 import * as fs from 'fs'
 
-import { DownloadFile, UploadFile } from './AWS/s3Functions.js';
+import { DownloadFile, UploadFile } from './AWS/s3Functions.js'
 
 import express from 'express'
-import fileUpload from 'express-fileupload';
+import fileUpload from 'express-fileupload'
 const app = express()
 app.use(express.json())
 app.use(express.urlencoded({ extended: false }))

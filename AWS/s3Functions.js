@@ -27,6 +27,7 @@ export const DownloadFile = async (uuid) => {
         })
 
         // Get the object from the Amazon S3 bucket. It is returned as a ReadableStream.
+        // TODO - Pipe filestream to res -> data.Body.pipe(res)
         const data = await s3Client.send(new GetObjectCommand(downloadParams))
         // Convert the ReadableStream to a string.
         const bodyContents = await streamToString(data.Body)
