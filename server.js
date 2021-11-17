@@ -1,46 +1,41 @@
-const multer = require('multer')
-const path = require("path")
-const fs = require('fs')
+import * as path from 'path'
+import * as fs from 'fs'
 
-const express = require('express')
+import { DownloadFile, UploadFile } from './AWS/s3Functions.js';
+
+import express from 'express'
+import fileUpload from 'express-fileupload';
 const app = express()
 app.use(express.json())
 app.use(express.urlencoded({ extended: false }))
+app.use(fileUpload())
 
-var storage = multer.diskStorage({
-    destination: function(req, file, cb) {
-        cb(null, 'Uploads')
-    },
-    filename: function(req, file, cb) {
-        cb(null, file.originalname)
-    }
-})
-
-var upload = multer({ storage: storage })
 
 app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, "upload.html"))
+    res.sendFile(path.join(path.resolve(), "upload.html"))
 })
 
 app.get('/api/files/:uuid', (req, res) => {
-    //checksum
-    var dateCreated = fs.statSync(path.join(__dirname, "Uploads/" + req.params.uuid)).birthtime;
-    if (((new Date().getTime() - dateCreated.getTime()) / 60000) > 1440)
-        res.send("24 hours have passed")
-    else
-        res.download(path.join(__dirname, "Uploads/" + req.params.uuid))
-    console.log((new Date().getTime() - dateCreated.getTime()) / 60000)
+    const uuid = req.params.uuid
 
+    DownloadFile(uuid).then((fileLocation) =>{
+        res.download(fileLocation, (err) => {
+            if(err) throw err
+            fs.unlinkSync(fileLocation)
+        })
+    })
 })
 
-app.post('/api/files', upload.single('myFile'), (req, res, next) => {
-    const file = req.file
+app.post('/api/files', (req, res, next) => {
+    const file = req.files.myFile
     if (!file) {
         const error = new Error('Please upload a file')
         error.httpStatusCode = 400
         return next(error)
     }
-     res.send(file.originalname + " has been uploaded")
+
+    var output = UploadFile(file)
+    res.send(output)
 })
 
 app.listen(3000, () => console.log('Server ready'))
