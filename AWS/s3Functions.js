@@ -36,7 +36,7 @@ export const UploadFile = (file) => {
     const uploadParams = {
         Bucket: "saadiandco",
         // Add the required 'Key' parameter using the 'path' module.
-        Key: uuid + "_" + file.name,
+        Key: uuid + ":" + file.name,
         // Add the required 'Body' parameter
         Body: file.data,
     }
