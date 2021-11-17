@@ -45,7 +45,7 @@ export const DownloadFile = async (uuid) => {
     }
 }
 
-export const UploadFile = async(file) => {
+export const UploadFile = (file) => {
     const uuid = uuidv4()
 
     // Set the parameters
@@ -58,10 +58,10 @@ export const UploadFile = async(file) => {
     }
 
     try {
-        const output = await s3Client.send(new PutObjectCommand(uploadParams))
-        res.send(file.name + " has been uploaded / UUID: " + uuid)
+        s3Client.send(new PutObjectCommand(uploadParams))
+        return (file.name + " has been uploaded / UUID: " + uuid)
     } catch (err) {
         console.log("Error", err)
-        res.send(err)
+        return err
     }
 }
