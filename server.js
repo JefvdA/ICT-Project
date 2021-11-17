@@ -18,11 +18,9 @@ app.get('/', (req, res) => {
 app.get('/api/files/:uuid', (req, res) => {
     const uuid = req.params.uuid
 
-    DownloadFile(uuid).then((fileLocation) =>{
-        res.download(fileLocation, (err) => {
-            if(err) throw err
-            fs.unlinkSync(fileLocation)
-        })
+    DownloadFile(uuid).then((fileStream) =>{
+        res.attachment(uuid.split("_")[1]) // Get filename through UUID parameter -> Later replace this with filename gotten out of rds database
+        fileStream.pipe(res)
     })
 })
 
