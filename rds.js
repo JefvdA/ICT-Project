@@ -32,20 +32,23 @@ export function Upload(fileName, Uuid) {
     })
 }
 
-export function FileName(Uuid) {
-    pool.connect((err, connection) => { //om naar pool te connecteren
-        if (err)
-            throw err
-
-        console.log(`connected as id ${connection.id}`)
-
-        let str = `select name from files where uuid = ("${Uuid}")`
-        pool.query(str, (err, rows) => { //je krijgt een error of rijen terug
-
-            if (!err)
-                return rows
-            else
-                return err
+export function FileName(uuid) {
+    return new Promise((resolve, reject) => {
+        let str = `select name from files where uuid = "${uuid}"`
+        pool.query(str, (err, result) => {
+            if (err) {
+                return reject(error)
+            }
+            return resolve(result)
         })
     })
+}
+
+export async function GetFileName(uuid) {
+    try {
+        const result = await FileName(uuid)
+        return result[0].name
+    } catch (error) {
+        return error
+    }
 }
