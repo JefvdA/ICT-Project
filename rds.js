@@ -10,24 +10,24 @@ var pool = mysql.createConnection({
     host: process.env.RDS_HOSTNAME,
     user: process.env.RDS_USERNAME,
     password: process.env.RDS_PASSWORD,
-    port: process.env.RDS_PORT
+    port: process.env.RDS_PORT,
+    database: process.env.RDS_DB
 });
 
 export function Upload(fileName, Uuid) {
-    pool.getConnection((err, connection) => { //om naar pool te connecteren
+    pool.connect((err, connection) => { //om naar pool te connecteren
         if (err)
             throw err
 
         console.log(`connected as id ${connection.id}`)
 
-        let str = `insert into files values (${fileName},${Uuid})`
-        connection.query(str, (err, rows) => { //je krijgt een error of rijen terug
+        let str = `insert into files (name, uuid) values ("${fileName}","${Uuid}")`
+        pool.query(str, (err, rows) => { //je krijgt een error of rijen terug
 
-            connection.release() //return to the conneciton pool
             if (!err)
-                res.send(rows)
+                return rows
             else
-                console.log(err)
+                return err
         })
     })
 }
