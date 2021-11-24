@@ -1,5 +1,5 @@
 import * as path from 'path'
-
+import { FileName } from './rds.js'
 import { DownloadFile, UploadFile } from './AWS/s3Functions.js'
 import * as security from './security.js'
 import express from 'express'
@@ -26,6 +26,7 @@ app.get('/api/files/:uuid', (req, res) => {
     const uuid = req.params.uuid
 
     DownloadFile(uuid).then((fileStream) => {
+        console.log(FileName(uuid))
         res.attachment(uuid.split(":")[1]) // Get filename through UUID parameter -> Later replace this with filename gotten out of rds database
         fileStream.pipe(res)
     })

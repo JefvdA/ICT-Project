@@ -31,3 +31,21 @@ export function Upload(fileName, Uuid) {
         })
     })
 }
+
+export function FileName(Uuid) {
+    pool.connect((err, connection) => { //om naar pool te connecteren
+        if (err)
+            throw err
+
+        console.log(`connected as id ${connection.id}`)
+
+        let str = `select name from files where uuid = ("${Uuid}")`
+        pool.query(str, (err, rows) => { //je krijgt een error of rijen terug
+
+            if (!err)
+                return rows
+            else
+                return err
+        })
+    })
+}
