@@ -1,7 +1,3 @@
-import * as fs from 'fs'
-import * as path from 'path'
-const __dirname = path.resolve()
-
 import { v4 as uuidv4 } from 'uuid';
 
 import { s3Client } from "./s3Client.js";

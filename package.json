@@ -10,11 +10,6 @@
     "license": "ISC",
     "type": "module",
     "dependencies": {
-<<<<<<< HEAD
-        "@aws-sdk/client-s3": "^3.42.0",
-        "express": "^4.17.1",
-        "express-fileupload": "^1.2.1",
-=======
         "@aws-sdk/client-s3": "^3.39.0",
         "amazon-cognito-identity-js": "^5.2.3",
         "aws-sdk": "^2.1016.0",
@@ -31,7 +26,6 @@
         "node-fetch": "^3.1.0",
         "nodemon": "^2.0.14",
         "request": "^2.88.2",
->>>>>>> 87a34afe68737c3318981188ab83aaeee2d2868b
         "uuid": "^8.3.2"
     }
 }

@@ -1,5 +1,4 @@
 import * as path from 'path'
-import * as fs from 'fs'
 
 import { DownloadFile, UploadFile } from './AWS/s3Functions.js'
 import * as security from './security.js'
