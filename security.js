@@ -1,8 +1,10 @@
 import * as AmazonCognitoIdentity from 'amazon-cognito-identity-js'
-import * as request from 'request';
-import * as jwkToPem from 'jwk-to-pem';
-import * as jwt from 'jsonwebtoken';
+import request from 'request';
+import jwkToPem from 'jwk-to-pem';
+import jwt from 'jsonwebtoken';
+import fetch from 'node-fetch';
 
+globalThis.fetch = fetch
 const poolData = {
     UserPoolId: "us-east-1_pfj5rGHlP",
     ClientId: "4fm5qp3pq6lqrkfqgepmu9caon",
@@ -55,7 +57,7 @@ export function validateToken(token) {
             json: true
         }, function(error, response, body) {
             if (!error && response.statusCode === 200) {
-                pems = {};
+                var pems = {};
                 var keys = body['keys'];
                 for (var i = 0; i < keys.length; i++) {
                     //Convert each key to PEM
