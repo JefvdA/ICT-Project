@@ -72,10 +72,10 @@ app.post('/api/files/:token', (req, res, next) => {
         },
         function(err) {
             console.log(err)
+            res.send(err)
             return err
         }
     )
-    res.send("dsfqsd")
 })
 
 app.post('/api/register', (req, res) => {
