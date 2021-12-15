@@ -47,12 +47,11 @@ app.get('/api/files/:uuid', (req, res) => {
     DownloadFile(uuid).then((fileStream) => {
 
         GetFileName(uuid).then(function test(params) {
-            res.send(params)
+            res.attachment(params)
+            fileStream.pipe(res)
         }, function error(err) {
             console.log(err)
         })
-        res.attachment(uuid.split(":")[1]) // Get filename through UUID parameter -> Later replace this with filename gotten out of rds database
-        fileStream.pipe(res)
     })
 })
 
@@ -68,7 +67,6 @@ app.post('/api/files/:token', (req, res, next) => {
             console.log(value)
             var output = UploadFile(file)
             res.send(output)
-
         },
         function(err) {
             console.log(err)
