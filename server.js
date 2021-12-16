@@ -1,69 +1,79 @@
 import * as path from 'path'
 import { GetFileName } from './rds.js'
 import { DownloadFile, UploadFile } from './AWS/s3Functions.js'
+import cookieParser from 'cookie-parser'
 import * as security from './security.js'
 import express from 'express'
 import fileUpload from 'express-fileupload'
 const __dirname = path.resolve()
 const app = express()
+app.use(cookieParser())
 
-let upload = (token) => { return `
-<head>
-    <meta charset="UTF-8">
-    <title>MY APP</title>
-</head>
-
-<body>
-    <!--  SINGLE FILE -->
-    <form action="/api/files/${token}" enctype="multipart/form-data" method="POST">
-        <input type="file" name="myFile" />
-        <input type="submit" value="Upload a file" />
-    </form>
-</body>
-
-</html>` }
 app.use(express.json())
 app.use(express.urlencoded({ extended: false }))
 app.use(fileUpload())
 
 
 app.get('/', (req, res) => {
+    res.clearCookie("token");
     res.sendFile(path.join(__dirname, "pages/index.html"))
 })
 app.get('/login', (req, res) => {
+    res.clearCookie("token");
     res.sendFile(path.join(__dirname, "pages/login.html"))
+})
 
+app.get('/upload', (req, res) => {
+    security.validateToken(req.cookies.token).then(
+        function(value) {
+            res.sendFile(path.join(__dirname, "pages/upload.html"))
+        },
+        function(err) {
+            console.log(err)
+            res.send("Please sign in or register to upload")
+            return err
+        }
+    )
 })
 
 app.get('/register', (req, res) => {
+    res.clearCookie("token");
     res.sendFile(path.join(__dirname, "pages/register.html"))
 })
-app.get('/upload/:token', (req, res) => {
-    res.sendFile(path.join(__dirname, "pages/upload.html"))
-})
+
 app.get('/api/files/:uuid', (req, res) => {
     const uuid = req.params.uuid
 
-    DownloadFile(uuid).then((fileStream) => {
+    security.validateToken(req.cookies.token).then(
+        function(value) {
+            DownloadFile(uuid).then((fileStream) => {
 
-        GetFileName(uuid).then(function test(params) {
-            res.send(params)
-        }, function error(err) {
+                GetFileName(uuid).then(function test(params) {
+                    res.attachment(params.split(":")[1]) // Get filename through UUID parameter -> Later replace this with filename gotten out of rds database
+                    fileStream.pipe(res)
+                }, function error(err) {
+                    console.log(err)
+                })
+
+            })
+        },
+        function(err) {
             console.log(err)
-        })
-        res.attachment(uuid.split(":")[1]) // Get filename through UUID parameter -> Later replace this with filename gotten out of rds database
-        fileStream.pipe(res)
-    })
+            res.send("Please sign in or register to upload")
+            return err
+        }
+    )
+
 })
 
-app.post('/api/files/:token', (req, res, next) => {
+app.post('/api/files/', (req, res, next) => {
     const file = req.files.myFile
     if (!file) {
         const error = new Error('Please upload a file')
         error.httpStatusCode = 400
         return next(error)
     }
-    security.validateToken(req.params.token).then(
+    security.validateToken(req.cookies.token).then(
         function(value) {
             console.log(value)
             var output = UploadFile(file)
@@ -72,21 +82,28 @@ app.post('/api/files/:token', (req, res, next) => {
         },
         function(err) {
             console.log(err)
-            res.send(err)
+            res.send("Please sign in or register to upload")
             return err
         }
     )
 })
 
 app.post('/api/register', (req, res) => {
-    res.send(security.registerUser(req.body.myEmail, req.body.myPassword))
+    try {
+        res.send(security.registerUser(req.body.myEmail, req.body.myPassword))
+    } catch (error) {
+        res.send("account already exist")
+    }
+
 })
 
 app.post('/api/login', (req, res, next) => {
+
     let output = security.login(req.body.myEmail, req.body.myPassword)
     output.then(
         function(value) {
-            res.send(upload(value.accessToken.jwtToken))
+            res.cookie("token", value.accessToken.jwtToken)
+            res.redirect("/upload")
         },
         function(error) {
             console.log(error)
