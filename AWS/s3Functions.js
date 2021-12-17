@@ -1,7 +1,8 @@
-import { v4 as uuidv4 } from 'uuid';
+import { v4 as uuidv4 } from 'uuid'
+import crypto from 'crypto'
 
-import { s3Client } from "./s3Client.js";
-import { PutObjectCommand, GetObjectCommand } from "@aws-sdk/client-s3";
+import { s3Client } from "./s3Client.js"
+import { PutObjectCommand, GetObjectCommand } from "@aws-sdk/client-s3"
 
 import { Upload } from '../rds.js'
 
@@ -42,7 +43,7 @@ export const UploadFile = (file) => {
     try {
         s3Client.send(new PutObjectCommand(uploadParams))
 
-        Upload(file.name, uuid);
+        Upload(file.name, uuid)
 
         return (file.name + " has been uploaded / UUID: " + uuid)
     } catch (err) {

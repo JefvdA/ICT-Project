@@ -15,13 +15,11 @@ var pool = mysql.createConnection({
 });
 
 export function Upload(fileName, Uuid) {
-    pool.connect((err, connection) => { //om naar pool te connecteren
+    pool.connect((err) => { //om naar pool te connecteren
         if (err)
             throw err
 
-        console.log(`connected as id ${connection.id}`)
-
-        let str = `insert into files (name, uuid) values ("${fileName}","${Uuid}")`
+        let str = `insert into files (name, uuid) values ("${fileName}", "${Uuid}")`
         pool.query(str, (err, rows) => { //je krijgt een error of rijen terug
 
             if (!err)

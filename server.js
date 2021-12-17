@@ -48,6 +48,7 @@ app.get('/api/files/:uuid', (req, res) => {
         function(value) {
             DownloadFile(uuid).then((fileStream) => {
 
+<<<<<<< HEAD
                 GetFileName(uuid).then(function test(params) {
                     res.attachment(params.split(":")[1]) // Get filename through UUID parameter -> Later replace this with filename gotten out of rds database
                     fileStream.pipe(res)
@@ -64,6 +65,15 @@ app.get('/api/files/:uuid', (req, res) => {
         }
     )
 
+=======
+        GetFileName(uuid).then(function test(params) {
+            res.attachment(params)
+            fileStream.pipe(res)
+        }, function error(err) {
+            console.log(err)
+        })
+    })
+>>>>>>> c03c51592716b8f71914cd5adb7c41c4021d779a
 })
 
 app.post('/api/files/', (req, res, next) => {
@@ -78,7 +88,6 @@ app.post('/api/files/', (req, res, next) => {
             console.log(value)
             var output = UploadFile(file)
             res.send(output)
-
         },
         function(err) {
             console.log(err)
