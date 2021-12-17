@@ -49,12 +49,11 @@ app.get('/api/files/:uuid', (req, res) => {
             DownloadFile(uuid).then((fileStream) => {
 
                 GetFileName(uuid).then(function test(params) {
-                    res.attachment(params.split(":")[1]) // Get filename through UUID parameter -> Later replace this with filename gotten out of rds database
+                    res.attachment(params)
                     fileStream.pipe(res)
                 }, function error(err) {
                     console.log(err)
                 })
-
             })
         },
         function(err) {
@@ -78,6 +77,7 @@ app.post('/api/files/', (req, res, next) => {
             console.log(value)
             var output = UploadFile(file)
             res.send(output)
+
         },
         function(err) {
             console.log(err)
@@ -88,12 +88,7 @@ app.post('/api/files/', (req, res, next) => {
 })
 
 app.post('/api/register', (req, res) => {
-    try {
-        res.send(security.registerUser(req.body.myEmail, req.body.myPassword))
-    } catch (error) {
-        res.send("account already exist")
-    }
-
+    res.send(security.registerUser(req.body.myEmail, req.body.myPassword))
 })
 
 app.post('/api/login', (req, res, next) => {
