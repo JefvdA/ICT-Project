@@ -88,7 +88,9 @@ app.post('/api/files/', (req, res, next) => {
 })
 
 app.post('/api/register', (req, res) => {
-    res.send(security.registerUser(req.body.myEmail, req.body.myPassword))
+    security.registerUser(req.body.myEmail, req.body.myPassword).then(  
+        function(value) { res.redirect('/login') },
+        function(error) { res.send("Error occured, please try again") })
 })
 
 app.post('/api/login', (req, res, next) => {
