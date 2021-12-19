@@ -17,7 +17,7 @@ exports.handler = (event) => {
     
     console.log("query: " + str)
 
-    pool.query(str, (err, rows) => { //je krijgt een error of rijen terug
+    pool.query(str, (err, rows) => {
         if (!err) {
             console.log(rows)
             pool.end()

@@ -16,9 +16,6 @@ exports.handler = (event) => {
 
         let str = `update files set checksum = '${checksum}' where uuid = '${key}';`
         pool.query(str, (err) => {
-                console.log(checksum)
-            console.log( key)
-            console.log(str)
             if (!err){
                 pool.end()
                 return 'Update succesfull'}
@@ -26,9 +23,6 @@ exports.handler = (event) => {
                 return err
         })
     
-    //const rows = Upload(key, checksum)
-    //console.log()
-        // TODO implement
     const response = {
         statusCode: 200,
         body: "Succes",
